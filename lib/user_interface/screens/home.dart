@@ -15,7 +15,7 @@ class _HomeState extends State<Home> {
     // PageState p;
    // userInterface_state currentState=userInterface_state.loading;
 
-   // User u;
+    User u;
     PageState p;
     Advice a;
     List<Advice> advices;
@@ -33,7 +33,7 @@ class _HomeState extends State<Home> {
    PageState.getAdvise((newUIState) {
      setState(() { currentState=newUIState;
      });});
-   if(currentState==userInterface_state.loaded){advices.add[PageState.getAdvise((newUIState))];}
+  // if(currentState==userInterface_state.loaded){advices.add[PageState.getAdvise((newUIState))];}
   }
 
   @override
