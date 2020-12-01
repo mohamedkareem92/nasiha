@@ -49,6 +49,7 @@ flutter:
   assets:
     - images/2.png
     - images/tt.png
+    - images/55.jpg
     - images/yy.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see

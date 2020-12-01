@@ -2,95 +2,130 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nasiha/model_advise/advice%20date.dart';
-import 'package:nasiha/model_advise/user%20data.dart';
 import 'package:nasiha/state%20mangment/page%20state.dart';
-
 
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
+
 class _HomeState extends State<Home> {
+  UerInterfaceState currentState = UerInterfaceState.loading;
 
-    // PageState p;
-   // userInterface_state currentState=userInterface_state.loading;
+  PageState p;
+  List<Advice> advices;
 
-    User u;
-    PageState p;
-    Advice a;
-    List<Advice> advices;
-   //  advices.add(a);
-   // // PageState p =new PageState();
-   //  // p.getAdvise();
-    userInterface_state currentState=userInterface_state.loading;
-   // //PageState p;
-
-
- @override
- void initState() {
-   super.initState();
-   print(currentState);
-   PageState.getAdvise((newUIState) {
-     setState(() { currentState=newUIState;
-     });});
-  // if(currentState==userInterface_state.loaded){advices.add[PageState.getAdvise((newUIState))];}
+  updateList(UerInterfaceState newUIState) {
+    setState(() {
+      currentState = newUIState;
+    });
   }
-  //its done
+
+  @override
+  void initState() {
+    super.initState();
+    print(currentState);
+  }
 
   @override
   Widget build(BuildContext context) {
-   return new MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-      backgroundColor:Color(0xffFFFFFF),
+    if (currentState == UerInterfaceState.loading) {
+      PageState.getAdvise(updateList);
+      return Center(child: CircularProgressIndicator());
+    }
+    if (currentState == UerInterfaceState.loaded) {
+      return buildUI();
+    }
+    if (currentState == UerInterfaceState.connectionError) {
+      return Container(
+        child: Text("error"),
+      );
+    }
+  } // build
+
+  Widget buildUI() {
+    return Scaffold(
+      backgroundColor: Color(0xffFFFFFF),
       resizeToAvoidBottomInset: false,
-       body:Container(
-          height: MediaQuery.of(context).size.height,
-     width: MediaQuery.of(context).size.width,
-     padding: EdgeInsets.only(top:60,left:10,right: 10),
-     child:ListView(
-       children: <Widget>[
-         ListTile(
-           leading: CircleAvatar(
-             radius: 36.0,
-             backgroundColor: Colors.transparent,
-             backgroundImage: AssetImage(u.userImage),
-           ),
-           title: Text(u.userName,style:TextStyle(fontSize:30,fontWeight: FontWeight.w700),),
-           subtitle: Text('Mon 22 Nov 20,3:22 pm'),
-         ),
-         Padding(
-           padding: const EdgeInsets.only(top:20.0,left:10.0,right: 10.0),
-           child: Text(a.advice),
-         ),
-         Padding(
-           padding: const EdgeInsets.only(top:10.0,left: 10,right: 10),
-           child: Container(
-             height: MediaQuery.of(context).size.height/4,
-             width: MediaQuery.of(context).size.width-8,
-             decoration: new BoxDecoration(
-               image: new DecorationImage(
-                 image: new ExactAssetImage(a.adviceImage),
-                 fit: BoxFit.cover,
-               ),
-             ),
-           ),
-         ),
-         SizedBox(height: 30,),
-         Row(
-           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-           children: [
-             Icon(FontAwesomeIcons.comment),
-             Icon(FontAwesomeIcons.flag),
-             Icon(FontAwesomeIcons.thumbsDown),
-             Icon(FontAwesomeIcons.thumbsUp),
-           ],
-         ),
-       ],
-      ),
-     ),
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.only(top: 60, left: 10, right: 10),
+        child: buildAdviceList(PageState.advices),
       ),
     );
-  }// build
-}// class
+  }// build method
+
+  Widget buildAdviceList(List<Advice> advices) {
+    return ListView.builder(
+      itemCount: advices.length,
+      itemBuilder: (context, index) => Card(
+        child: Column(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.only(top: 15),
+              child: Column(
+                children: <Widget>[
+                  CircleAvatar(
+                    radius: 36.0,
+                    backgroundColor: Colors.transparent,
+                    backgroundImage:
+                        AssetImage(advices[index].adviceCreator.userImage),
+                  ),
+                  Text(
+                    advices[index].adviceCreator.userName,
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700),
+                  ),
+                  Text('Mon 22 Nov 20,3:22 pm'),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.all(8),
+              width: MediaQuery.of(context).size.width,
+              alignment: Alignment.topRight,
+              child: Text(
+                advices[index].advice,
+                maxLines: 10,
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            Container(
+              height: MediaQuery.of(context).size.height / 3,
+              child: Image.asset(
+                advices[index].adviceImage,
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                fit: BoxFit.cover,
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Icon(FontAwesomeIcons.comment),
+                Icon(FontAwesomeIcons.flag),
+                Icon(FontAwesomeIcons.thumbsDown),
+                Icon(FontAwesomeIcons.thumbsUp),
+              ],
+            ),
+            SizedBox(
+              height: 20,
+            ),
+          ],
+        ),
+        color: Colors.grey[300],
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.white70, width: 1),
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+    );
+  }
+} // class
 ///////////////////////////////////////////////////////////////////////////////
